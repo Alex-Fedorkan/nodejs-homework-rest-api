@@ -12,4 +12,14 @@ const HttpCode = {
   INTERNAL_SERVER_ERROR: 500,
 };
 
-module.exports = { Subscription, HttpCode };
+const publicDir = "public";
+const uploadDir = "tmp";
+const avatarsOfUsers = "images";
+
+module.exports = {
+  Subscription,
+  HttpCode,
+  publicDir,
+  uploadDir,
+  avatarsOfUsers,
+};
