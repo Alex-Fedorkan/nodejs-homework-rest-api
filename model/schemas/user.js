@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
 const { Subscription } = require("../../helpers/constants");
 
 require("dotenv").config();
@@ -20,6 +21,12 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password required"],
+    },
+    avatarURL: {
+      type: String,
+      default: function () {
+        return gravatar.url(this.email, { s: "250" }, true);
+      },
     },
     subscription: {
       type: String,

@@ -1,15 +1,18 @@
+const path = require("path");
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const { HttpCode } = require("./helpers/constants");
+const { HttpCode, publicDir } = require("./helpers/constants");
 
 const authRouter = require("./routes/api/auth/index");
 const usersRouter = require("./routes/api/users/index");
 const contactsRouter = require("./routes/api/contacts/index");
 
 const app = express();
+
+app.use(express.static(path.join(__dirname, publicDir)));
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 

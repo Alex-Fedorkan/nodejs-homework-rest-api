@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const { Subscription, HttpCode } = require("../../../helpers/constants");
 
-const schemaUpdate = Joi.object({
+const schemaUpdateSubscription = Joi.object({
   subscription: Joi.string()
     .valid(Subscription.FREE, Subscription.PRO, Subscription.PREMIUM)
     .required(),
@@ -21,6 +21,19 @@ const validate = (schema, object, next) => {
   next();
 };
 
-module.exports.update = (req, res, next) => {
-  return validate(schemaUpdate, req.body, next);
+module.exports.updateSubscription = (req, res, next) => {
+  return validate(schemaUpdateSubscription, req.body, next);
+};
+
+module.exports.updateAvatar = (req, res, next) => {
+  if (!req.file) {
+    return res.status(HttpCode.BAD_REQUEST).json({
+      status: "error",
+      code: HttpCode.BAD_REQUEST,
+      data: "Bad request",
+      message: "Field of avatar with file not found.",
+    });
+  }
+
+  next();
 };
