@@ -3,6 +3,7 @@ module.exports = {
     commonjs: true,
     es2021: true,
     node: true,
+    "mocha/globals": true,
   },
   extends: ["standard", "plugin:json/recommended", "prettier"],
   parserOptions: {
