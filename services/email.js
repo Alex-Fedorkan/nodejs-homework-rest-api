@@ -30,8 +30,7 @@ class EmailService {
       product: {
         name: "Contacts",
         link: this.link,
-        // logo:
-        //   "https://images.unsplash.com/photo-1597942981460-413ddac99af3?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MzE0fHxuaWtlfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+        logo: "https://cdn-images-1.medium.com/max/900/0*9hcinRdaHicrNpNE.jpg",
       },
     });
 
@@ -64,8 +63,8 @@ class EmailService {
 
     const msg = {
       to: email,
-      from: "alexfa@list.ru",
-      subject: "Email varification",
+      from: "alex.fedorkan@gmail.com",
+      subject: "Email verification",
       html: emailBody,
     };
     await this.#sender.send(msg);
