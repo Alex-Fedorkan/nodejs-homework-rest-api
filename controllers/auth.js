@@ -1,7 +1,9 @@
 const jwt = require("jsonwebtoken");
+const { v4: uuid } = require("uuid");
 const Users = require("../model/users");
 const { HttpCode } = require("../helpers/constants");
 const User = require("../model/schemas/user");
+const EmailService = require("../services/email");
 
 require("dotenv").config();
 const SECRET_KEY = process.env.JWT_SECRET;
@@ -21,7 +23,12 @@ const register = async (req, res, next) => {
       });
     }
 
-    const newUser = await User.create(req.body);
+    const verificationToken = uuid();
+
+    const emailService = new EmailService(process.env.NODE_ENV);
+    await emailService.sendEmail(verificationToken, email);
+
+    const newUser = await User.create({ ...req.body, verificationToken });
 
     return res.status(HttpCode.CREATED).json({
       status: "success",
@@ -39,13 +46,42 @@ const register = async (req, res, next) => {
   }
 };
 
+const verify = async (req, res, next) => {
+  try {
+    const user = await Users.findByVerifyToken(req.params.verificationToken);
+
+    if (user) {
+      await Users.updateVerifyToken(user.id, null);
+
+      return res.status(HttpCode.OK).json({
+        status: "success",
+        code: HttpCode.OK,
+        message: "Verification successful",
+      });
+    }
+
+    return res.status(HttpCode.BAD_REQUEST).json({
+      status: "error",
+      code: HttpCode.BAD_REQUEST,
+      data: "Bad request",
+      message: "User not found",
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     const user = await Users.findByEmail(email);
 
-    if (!user || !(await user.validPassword(password))) {
+    if (
+      !user ||
+      !(await user.validPassword(password)) ||
+      user.verificationToken
+    ) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         status: "error",
         code: HttpCode.UNAUTHORIZED,
@@ -86,4 +122,4 @@ const logout = async (req, res, next) => {
   return res.status(HttpCode.NO_CONTENT).json({});
 };
 
-module.exports = { register, login, logout };
+module.exports = { register, verify, login, logout };
